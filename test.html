@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Шкала депрессии Бека</title>
+ <link href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Comfortaa', sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .answer-options {
+      display: flex;
+      flex-direction: column;
+       margin-top: 10px;  
+align-items: center;
+    }
+    .answer {
+      padding: 10px;
+      border-radius: 45px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: background-color 0.3s, border-color 0.3s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: rgba(176, 160, 224, 1);
+width: 344px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+
+  justify-content: center;
+    }
+    .answer:hover {
+      background-color: #f0f0f0;
+    }
+    .answer.selected {
+      background-color: #907fd0;
+      color: white;
+      border-color: #6c5cbf;
+    }
+    h1 {
+      text-align: center;
+    }
+    button {
+      display: block;
+      margin: 30px auto;
+      padding: 10px 30px;
+      font-size: 18px;
+      background-color: #907fd0;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #6c5cbf;
+    }
+    .result {
+      margin-top: 30px;
+      font-weight: bold;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Шкала депрессии Бека</h1>
+
+<form id="testForm">
+  <div id="questionsContainer"></div>
+  <button type="submit">Отправить</button>
+</form>
+
+<div class="result" id="result"></div>
+
+<script>
+// Массив вопросов с их вариантами
+const questions = [
+{
+text:"Вопрос 1. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я не чувствую себя расстроенным, печальным.  ', value:'0'},
+{text:'Я расстроен.  ', value:'1'},
+{text:'Я все время расстроен и не могу от этого отключиться. ', value:'2'},
+{text:'Я настолько расстроен и несчастлив, что не могу это выдержать. ', value:'3'}
+]
+},
+{
+text:"Вопрос 2. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я не тревожусь о своем будущем.  ', value:'0'},
+{text:'Я чувствую, что озадачен будущим.  ', value:'1'},
+{text:'Я чувствую, что меня ничего не ждет в будущем. ', value:'2'},
+{text:'Мое будущее безнадежно, и ничто не может измениться к лучшему. ', value:'3'}
+]
+},
+{
+text:"Вопрос 3. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я не чувствую себя неудачником.  ', value:'0'},
+{text:'Я чувствую, что терпел больше неудач, чем другие люди.   ', value:'1'},
+{text:'Когда я оглядываюсь на свою жизнь, я вижу в ней много неудач.   ', value:'2'},
+{text:'Я чувствую, что как личность я - полный неудачник.   ', value:'3'}
+]
+},
+{
+text:"Вопрос 4. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я получаю столько же удовлетворения от жизни, как раньше.  ', value:'0'},
+{text:'Я не получаю столько же удовлетворения от жизни, как раньше.   ', value:'1'},
+{text:'Я больше не получаю удовлетворения ни от чего.  ', value:'2'},
+{text:'Я полностью не удовлетворен жизнью, и мне все надоело.  ', value:'3'}
+]
+},
+{
+text:"Вопрос 5. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я не чувствую себя в чем-нибудь виноватым.   ', value:'0'},
+{text:'Достаточно часто я чувствую себя виноватым.   ', value:'1'},
+{text:'Большую часть времени я чувствую себя виноватым.  ', value:'2'},
+{text:'Я постоянно испытываю чувство вины. ', value:'3'}
+]
+},
+{
+text:"Вопрос 6. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я не чувствую, что могу быть наказанным за что-либо.    ', value:'0'},
+{text:'Я чувствую, что могу быть наказан.   ', value:'1'},
+{text:'Я ожидаю, что могу быть наказан. ', value:'2'},
+{text:'Я чувствую себя уже наказанным. ', value:'3'}
+]
+},
+{
+text:"Вопрос 7. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я не разочаровался в себе.   ', value:'0'},
+{text:'Я разочаровался в себе.   ', value:'1'},
+{text:'Я себе противен. ', value:'2'},
+{text:'Я себя ненавижу. ', value:'3'}
+]
+},
+{
+text:"Вопрос 8. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я знаю, что я не хуже других.     ', value:'0'},
+{text:' Я критикую себя за ошибки и слабости.   ', value:'1'},
+{text:'Я все время обвиняю себя за свои поступки.  ', value:'2'},
+{text:'Я виню себя во всем плохом, что происходит.  ', value:'3'}
+]
+},
+{
+text:"Вопрос 9. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я никогда не думал покончить с собой.   ', value:'0'},
+{text:'Ко мне приходят мысли покончить с собой, но я не буду их осуществлять.   ', value:'1'},
+{text:'Я хотел бы покончить с собой.  ', value:'2'},
+{text:'Я бы убил себя, если бы представился случай. ', value:'3'}
+]
+},
+{
+text:"Вопрос 10. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я плачу не больше, чем обычно.    ', value:'0'},
+{text:'Сейчас я плачу чаще, чем раньше.    ', value:'1'},
+{text:'Теперь я все время плачу.  ', value:'2'},
+{text:'Раньше я мог плакать, а сейчас не могу, даже если мне хочется.  ', value:'3'}
+]
+},
+{
+text:"Вопрос 11. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Сейчас я раздражителен не более чем обычно.   ', value:'0'},
+{text:'Я более легко раздражаюсь, чем раньше. ', value:'1'},
+{text:'Теперь я постоянно чувствую, что раздражен.   ', value:'2'},
+{text:'Я стал равнодушен к вещам, которые меня раньше раздражали.  ', value:'3'}
+]
+},
+{
+text:"Вопрос 12. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я не утратил интереса к другим людям.    ', value:'0'},
+{text:'Я меньше интересуюсь другими людьми, чем раньше.    ', value:'1'},
+{text:'Я почти потерял интерес к другим людям.  ', value:'2'},
+{text:'Я полностью утратил интерес к другим людям. ', value:'3'}
+]
+},
+{
+text:"Вопрос 13. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я откладываю принятие решения иногда, как и раньше.    ', value:'0'},
+{text:'Я чаще, чем раньше, откладываю принятие решения.  ', value:'1'},
+{text:'Мне труднее принимать решения, чем раньше.   ', value:'2'},
+{text:'Я больше не могу принимать решения.   ', value:'3'}
+]
+},
+{
+text:"Вопрос 14. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я не чувствую, что выгляжу хуже, чем обычно.   ', value:'0'},
+{text:'Меня тревожит, что я выгляжу старым и непривлекательным.   ', value:'1'},
+{text:'Я знаю, что в моей внешности произошли существенные изменения, делающие меня непривлекательным.', value:'2'},
+{text:'Я знаю, что выгляжу безобразно.', value:'3'}
+]
+},
+{
+text:"Вопрос 15. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я могу работать так же хорошо, как и раньше.   ', value:'0'},
+{text:'Мне необходимо сделать дополнительное усилие, чтобы начать делать что-нибудь.', value:'1'},
+{text:'Я с трудом заставляю себя делать что-либо.  ', value:'2'},
+{text:'Я совсем не могу выполнять никакую работу.  ', value:'3'}
+]
+},
+{
+text:"Вопрос 16. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я сплю так же хорошо, как и раньше.   ', value:'0'},
+{text:'Сейчас я сплю хуже, чем раньше.     ', value:'1'},
+{text:'Я просыпаюсь на 1-2 часа раньше, и мне трудно заснуть опять.  ', value:'2'},
+{text:'Я просыпаюсь на несколько часов раньше обычного и не могу потом уснуть', value:'3'},
+]
+},
+{
+text:"Вопрос 17. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я устаю не больше, чем обычно.    ', value:'0'},
+{text:'Теперь я устаю быстрее, чем раньше.    ', value:'1'},
+{text:'Я устаю почти от всего, что я делаю.   ', value:'2'},
+{text:'Я не могу ничего делать из-за усталости.  ', value:'3'}
+]
+},
+{
+text:"Вопрос 18. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Мой аппетит не хуже, чем обычно.    ', value:'0'},
+{text:'Мой аппетит стал хуже, чем раньше.    ', value:'1'},
+{text:'Мой аппетит теперь значительно хуже. ', value:'2'},
+{text:'У меня вообще нет аппетита.   ', value:'3'}
+]
+},
+{
+text:"Вопрос 19. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'В последнее время я не похудел или потеря веса была незначительной.     ', value:'0'},
+{text:'За последнее время я потерял более 2 кг.   ', value:'1'},
+{text:'Я потерял более 5 кг.   ', value:'2'},
+{text:'Я потерял более 7 кr.  ', value:'3'}
+]
+},
+{
+text:"Вопрос 20. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'Я беспокоюсь о своем здоровье не больше, чем обычно.   ', value:'0'},
+{text:'Меня тревожат проблемы моего здоровья, такие как запоры, тошноты и тд. ', value:'1'},
+{text:'Я очень обеспокоен своим физическим здоровьем, мне трудно думать о чем-либо другом', value:'2'},
+{text:'Я так обеспокоен своим здоровьем, что мне трудно думать о чем-либо другом', value:'3'},
+]
+},
+{
+text:"Вопрос 21. Как Вы себя чувствовали на этой неделе и сегодня?",
+answers:[
+{text:'В последнее время я не замечал изменения своего интереса к сексу.    ', value:'0'},
+{text:'Меня меньше занимают проблемы секса, чем раньше.   ', value:'1'},
+{text:'Я сейчас значительно меньше интересуюсь сексуальными потребностями, чем раньше', value:'2'},
+{text:'Я полностью утратил сексуальный интерес. ', value:'3'}
+]
+},
+];
+
+// Генерация вопросов
+const container = document.getElementById('questionsContainer');
+
+questions.forEach((question, index) => {
+const qNumber = index +1;
+
+const div = document.createElement('div');
+div.className='question';
+
+const questionTitle = document.createElement('div');
+questionTitle.innerText=question.text;
+
+const optionsDiv = document.createElement('div');
+optionsDiv.className='answer-options';
+
+question.answers.forEach(ans => {
+const answerDiv=document.createElement('div');
+answerDiv.className='answer';
+answerDiv.innerText=ans.text;
+
+answerDiv.dataset.value=ans.value;
+
+answerDiv.onclick= () => {
+Array.from(optionsDiv.children).forEach(c => c.classList.remove('selected'));
+answerDiv.classList.add('selected');
+const currentQuestion = div;
+const nextQuestion = currentQuestion.nextElementSibling;
+if(nextQuestion && nextQuestion.classList.contains('question')){
+ currentQuestion.style.display='none'; 
+ nextQuestion.style.display='block'; 
+}
+};
+
+optionsDiv.appendChild(answerDiv);
+});
+
+div.appendChild(questionTitle);
+div.appendChild(optionsDiv);
+container.appendChild(div);
+});
+
+document.querySelectorAll('.question').forEach((q, index) => {
+if(index !==0){
+q.style.display='none';
+}
+});
+
+document.getElementById('testForm').addEventListener('submit', async function(e) {
+e.preventDefault();
+
+const answers = {};
+
+document.querySelectorAll('.question').forEach((questionDiv, index) => {
+const qNumber=index+1;
+
+const selectedAnswer=questionDiv.querySelector('.answer.selected');
+if(selectedAnswer){
+answers['q'+qNumber]=parseInt(selectedAnswer.dataset.value);
+} else {
+
+answers['q'+qNumber]=null; 
+}
+});
+
+// про сервер
+try {
+const response= await fetch('http://localhost:3000/calculate_results',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify(answers)
+});
+const data= await response.json();
+document.getElementById('result').innerText=
+`Ваш балл: ${data.score}\nИнтерпретация:\n${data.interpretation}`;
+} catch(e){
+document.getElementById('result').innerText='Ошибка при отправке данных.';
+console.error(e);
+}
+});
+</script>
+
+</body>
+</html>
