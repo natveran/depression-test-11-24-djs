@@ -341,10 +341,10 @@ answers['q'+qNumber]=null;
 
 // про сервер
 try {
-const response= await fetch('http://localhost:3000/calculate_results', 'https://natveran.github.io/depression-test-11-24-djs/',{
-method:'POST',
-headers:{'Content-Type':'application/json'},
-body:JSON.stringify(answers)
+const response= await fetch('https://natveran.github.io/calculate_results', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(answers)
 });
   
 const data= await response.json();
