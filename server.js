@@ -9,7 +9,11 @@ const app = express();
 const port = 3000;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: ['https://natveran.github.io/depression-test-11-24-djs/', 'http://localhost:3000'],
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
 
 // Swagger конфигурация
 const swaggerDefinition = {
